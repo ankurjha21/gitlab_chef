@@ -1,35 +1,34 @@
-#
 # Cookbook Name:: gitlabb
 # Recipe:: default
 #
 # Copyright 2017, YOUR_COMPANY_NAME
 #
 # All rights reserved - Do Not Redistribute
-#
 
-yum_package %w(policycoreutils postfix openssh-server openssh-clients) do
+package %w(ca-certificates curl openssh-server) do
   action :install
-end
-
-service 'sshd' do
-    action [:start, :enable]
  end
+
+package 'postfix' do
+   action :install
+ end
+
 
 service 'postfix' do
     action [:start, :enable]
  end
 
- execute 'gitlab repo' do
-   command 'rpm https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash'
+execute 'gitlab repo' do
+   command 'curl -LO https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | bash script.deb.sh' 
  end
 
-yum_package "gitlab-ce" do
+package 'gitlab-ce' do
    action :install
-end
+ end
 
-service "gitlab-ctl" do
-   action :reconfigure
-end
+execute 'gitlab-ctl' do
+   command 'gitlab-ctl reconfigure'
+ end
 
 
 
